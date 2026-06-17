@@ -4,7 +4,6 @@ Populates the database with realistic threat and alert data via the live API.
 """
 import httpx
 import time
-import random
 
 BASE_URL = "http://localhost:8000/api/v1"
 EMAIL = "demo@sentinelx.com"
@@ -119,7 +118,7 @@ def verify_dashboard(token: str):
     headers = {"Authorization": f"Bearer {token}"}
     resp = httpx.get(f"{BASE_URL}/dashboard/stats", headers=headers, timeout=15)
     stats = resp.json()
-    print(f"\n📊 Dashboard Stats After Seeding:")
+    print("\n📊 Dashboard Stats After Seeding:")
     print(f"  Total Threats:      {stats['total_threats']}")
     print(f"  Phishing Attempts:  {stats['phishing_attempts']}")
     print(f"  Critical Alerts:    {stats['critical_alerts']}")

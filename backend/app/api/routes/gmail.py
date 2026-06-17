@@ -9,7 +9,6 @@ DELETE /gmail/accounts/{id} — Disconnect a Gmail account
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import RedirectResponse, HTMLResponse
@@ -21,7 +20,6 @@ from app.database.session import get_db
 from app.database.models.models import EmailAccount, User, UserRole
 from app.api.dependencies.auth import get_current_user, require_role
 from app.services.gmail_service import gmail_service
-from app.core.security import create_access_token, decode_access_token
 
 logger = get_logger(__name__)
 
@@ -176,7 +174,7 @@ def list_gmail_accounts(
         db.query(EmailAccount)
         .filter(
             EmailAccount.user_id == current_user.id,
-            EmailAccount.is_active == True,
+            EmailAccount.is_active,
         )
         .all()
     )

@@ -7,7 +7,7 @@ Scaled to a 1–10 band as per user requirements.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
 
 from app.core.config import settings
 from app.core.logging import get_logger
@@ -178,13 +178,17 @@ class RiskEngine:
             domain_match = re.search(r"@([\w.-]+)", sender)
             if domain_match:
                 domain = domain_match.group(1).lower()
-                if domain in disposable: score += 60.0
+                if domain in disposable:
+                    score += 60.0
                 local = sender.split("@")[0]
                 digit_ratio = sum(c.isdigit() for c in local) / max(len(local), 1)
-                if digit_ratio > 0.5: score += 20.0
-                if len(local) > 20: score += 10.0
+                if digit_ratio > 0.5:
+                    score += 20.0
+                if len(local) > 20:
+                    score += 10.0
         elif channel == "sms":
-            if re.match(r"^\+?[89]\d{9,}$", sender): score += 30.0
+            if re.match(r"^\+?[89]\d{9,}$", sender):
+                score += 30.0
         return round(min(score, 100.0), 2)
 
 

@@ -5,7 +5,7 @@ Analyzes phone call transcripts (or Whisper-transcribed audio) for scam patterns
 
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Optional
 import uuid
 
 from sqlalchemy.orm import Session

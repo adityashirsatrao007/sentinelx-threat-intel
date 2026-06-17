@@ -3,7 +3,6 @@ SentinelX — Full API Health Check
 Tests every registered route against the live local backend.
 """
 import httpx
-import json
 
 BASE = "http://localhost:8000"
 API  = f"{BASE}/api/v1"
@@ -107,7 +106,7 @@ with httpx.Client(base_url=BASE, timeout=15) as c:
 
     if alert_id:
         r = c.post(f"{API}/alerts/{alert_id}/acknowledge", headers=headers)
-        check(f"POST /alerts/{{id}}/acknowledge", r.status_code, (200,))
+        check("POST /alerts/{id}/acknowledge", r.status_code, (200,))
 
     r = c.post(f"{API}/alerts/acknowledge-all", headers=headers)
     check("POST /alerts/acknowledge-all", r.status_code, (200,))

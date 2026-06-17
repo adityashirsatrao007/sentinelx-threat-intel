@@ -5,7 +5,6 @@ FastAPI Application Entry Point
 
 from __future__ import annotations
 
-import threading
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
@@ -13,8 +12,6 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
-from slowapi.errors import RateLimitExceeded
-from slowapi import _rate_limit_exceeded_handler
 
 from app.core.config import settings
 # from app.core.limiter import limiter

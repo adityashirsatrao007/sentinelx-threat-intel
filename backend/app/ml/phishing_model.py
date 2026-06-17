@@ -7,7 +7,7 @@ Covers SMS scams, UPI fraud, KYC phishing, lottery scams, and more.
 from __future__ import annotations
 
 import re
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 from app.core.logging import get_logger
 

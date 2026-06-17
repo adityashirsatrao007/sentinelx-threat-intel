@@ -3,10 +3,9 @@ LLM Inference Service
 Integrates Qwen 2.5 via Hugging Face Inference API for advanced threat analysis.
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional
 import httpx
 import json
-import time
 from app.core.config import settings
 from app.core.logging import get_logger
 

@@ -36,14 +36,10 @@ slowapi==0.1.9
 httpx==0.27.2
 
 # ─── AI / ML ──────────────────────────────────────────────────────────────────
-# NOTE: torch and transformers are large packages.
+# NOTE: torch is required by openai-whisper for local model inference.
 # For CPU-only environments, use the CPU-specific torch wheel.
 # torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 torch>=2.4.1
-transformers>=4.45.1
-tokenizers>=0.20.1
-sentencepiece>=0.2.0
-accelerate>=0.34.2
 
 # ─── Speech-to-Text ───────────────────────────────────────────────────────────
 # openai-whisper==20240930

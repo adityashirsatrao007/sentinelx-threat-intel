@@ -11,7 +11,6 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from app.core.logging import get_logger
-from app.core.security import hash_password
 from app.database.models.models import Device, EmailAccount, User, UserRole
 from app.schemas.schemas import UserResponse
 
@@ -112,7 +111,7 @@ class UserService:
         return device
 
     def list_devices(self, db: Session, user: User) -> List[Device]:
-        return db.query(Device).filter(Device.user_id == user.id, Device.is_active == True).all()
+        return db.query(Device).filter(Device.user_id == user.id, Device.is_active).all()
 
     def remove_device(self, db: Session, device_id: uuid.UUID, user: User) -> bool:
         device = db.query(Device).filter(Device.id == device_id, Device.user_id == user.id).first()
@@ -126,7 +125,7 @@ class UserService:
     def list_email_accounts(self, db: Session, user: User) -> List[EmailAccount]:
         return (
             db.query(EmailAccount)
-            .filter(EmailAccount.user_id == user.id, EmailAccount.is_active == True)
+            .filter(EmailAccount.user_id == user.id, EmailAccount.is_active)
             .all()
         )
 

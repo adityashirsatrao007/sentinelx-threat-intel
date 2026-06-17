@@ -3,9 +3,9 @@ Database ORM Models
 Defines User, Threat, Alert, and AuditLog tables.
 """
 
+import enum
 import uuid
 from datetime import datetime, timezone
-from typing import List, Optional
 
 from sqlalchemy import (
     Boolean,
@@ -13,7 +13,6 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
-    Integer,
     JSON,
     String,
     Text,
@@ -30,9 +29,6 @@ def utcnow() -> datetime:
 
 
 # ─── Enums ────────────────────────────────────────────────────────────────────
-
-import enum
-
 
 class UserRole(str, enum.Enum):
     sysadmin = "sysadmin"

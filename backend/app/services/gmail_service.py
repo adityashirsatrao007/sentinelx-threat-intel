@@ -6,9 +6,6 @@ Handles Google OAuth2 flow and Gmail API email fetching.
 from __future__ import annotations
 
 import base64
-import email as email_lib
-import uuid
-from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Dict, Any
 
 from google.oauth2.credentials import Credentials
@@ -16,11 +13,10 @@ from google.auth.transport.requests import Request as GoogleRequest
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.logging import get_logger
-from app.database.models.models import EmailAccount, User
+from app.database.models.models import EmailAccount
 
 logger = get_logger(__name__)
 

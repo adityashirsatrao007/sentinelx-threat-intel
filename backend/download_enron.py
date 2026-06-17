@@ -1,6 +1,5 @@
 import kagglehub
 from kagglehub import KaggleDatasetAdapter
-import pandas as pd
 
 # Path to the file in the dataset
 file_path = "emails.csv"

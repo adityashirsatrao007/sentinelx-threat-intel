@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.logging import get_logger
@@ -101,7 +101,7 @@ def list_email_accounts(
         db.query(EmailAccount)
         .filter(
             EmailAccount.user_id == current_user.id,
-            EmailAccount.is_active == True,
+            EmailAccount.is_active,
         )
         .all()
     )
@@ -130,7 +130,7 @@ def scan_emails(
         db.query(EmailAccount)
         .filter(
             EmailAccount.user_id == current_user.id,
-            EmailAccount.is_active == True,
+            EmailAccount.is_active,
         )
         .all()
     )

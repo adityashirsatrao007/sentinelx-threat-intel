@@ -1,6 +1,5 @@
 import httpx
 import uuid
-import time
 from pprint import pprint
 
 BASE_URL = "http://localhost:8000/api/v1"

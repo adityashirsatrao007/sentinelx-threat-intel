@@ -15,6 +15,7 @@ from app.database.models.models import User
 from app.api.dependencies.auth import get_current_user
 from app.services.dashboard_service import dashboard_service
 from app.schemas.schemas import DashboardStats, ThreatListResponse, DashboardTrends
+from app.schemas.analytics import TargetAnalyticsResponse
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -46,9 +47,6 @@ def get_threats(
     current_user: User = Depends(get_current_user),
 ) -> ThreatListResponse:
     return dashboard_service.get_recent_threats(db, current_user, skip=skip, limit=limit)
-
-
-from app.schemas.analytics import TargetAnalyticsResponse
 
 
 @router.get(

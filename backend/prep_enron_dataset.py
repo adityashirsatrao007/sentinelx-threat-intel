@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import random
 import email
 from email import policy
 import pandas as pd
@@ -31,12 +30,12 @@ def parse_raw_email(raw_content):
                 try:
                     body = part.get_content()
                     break
-                except:
+                except Exception:
                     pass
     else:
         try:
             body = msg.get_content()
-        except:
+        except Exception:
             body = msg.get_payload()
             
     return sender, subject, body.strip()

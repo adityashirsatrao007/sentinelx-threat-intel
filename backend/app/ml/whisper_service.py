@@ -10,7 +10,6 @@ import tempfile
 from pathlib import Path
 from typing import Optional, Tuple
 import httpx
-import time
 
 from app.core.config import settings
 from app.core.logging import get_logger

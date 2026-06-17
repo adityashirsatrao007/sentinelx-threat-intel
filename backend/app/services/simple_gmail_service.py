@@ -9,7 +9,7 @@ from __future__ import annotations
 import imaplib
 import email as email_lib
 from email.header import decode_header
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List, Dict, Any, Optional
 
 from app.core.logging import get_logger

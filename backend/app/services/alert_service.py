@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -86,7 +86,7 @@ class AlertService:
                     query = query.join(Threat).filter(Threat.created_by == user.id)
 
         if unacknowledged_only:
-            query = query.filter(Alert.acknowledged == False)
+            query = query.filter(not Alert.acknowledged)
         total = query.count()
         alerts = query.order_by(desc(Alert.created_at)).offset(skip).limit(limit).all()
         return AlertListResponse(
@@ -144,7 +144,7 @@ class AlertService:
 
     def acknowledge_all_alerts(self, user: User, db: Session) -> int:
         """Mark all unacknowledged alerts as acknowledged for the user's scope."""
-        query = db.query(Alert).filter(Alert.acknowledged == False)
+        query = db.query(Alert).filter(not Alert.acknowledged)
         
         if user.role != UserRole.sysadmin:
             if user.role == UserRole.soc:

@@ -12,7 +12,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from app.core.logging import get_logger
-from app.database.models.models import EmailAccount, ThreatType
+from app.database.models.models import EmailAccount
 from app.database.session import SessionLocal
 from app.services.alert_service import alert_service
 
@@ -35,7 +35,7 @@ class PollingService:
         try:
             accounts: List[EmailAccount] = (
                 db.query(EmailAccount)
-                .filter(EmailAccount.is_active == True)
+                .filter(EmailAccount.is_active)
                 .filter(EmailAccount.provider.in_(["gmail", "gmail_imap"]))
                 .all()
             )

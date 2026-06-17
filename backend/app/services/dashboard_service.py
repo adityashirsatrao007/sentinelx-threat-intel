@@ -11,7 +11,7 @@ from typing import List
 from sqlalchemy import func, desc
 from sqlalchemy.orm import Session
 
-from app.database.models.models import Alert, Threat, ThreatLevel, AlertSeverity, User, UserRole
+from app.database.models.models import Alert, Threat, AlertSeverity, User, UserRole
 from app.schemas.schemas import (
     DashboardStats,
     ThreatSummary,
@@ -68,7 +68,7 @@ class DashboardService:
             t_query.with_entities(func.avg(Threat.risk_score)).scalar() or 0.0
         )
         unacknowledged = (
-            a_query.filter(Alert.acknowledged == False).count()
+            a_query.filter(not Alert.acknowledged).count()
         )
 
         return DashboardStats(
@@ -145,7 +145,7 @@ class DashboardService:
                 func.count(Threat.id).label("count"),
                 func.avg(Threat.risk_score).label("avg_score")
             )
-            .filter(Threat.target_department != None)
+            .filter(Threat.target_department is not None)
             .group_by(Threat.target_department)
             .order_by(desc("count"))
             .all()
@@ -158,7 +158,7 @@ class DashboardService:
                 func.count(Threat.id).label("count"),
                 func.avg(Threat.risk_score).label("avg_score")
             )
-            .filter(Threat.target_role != None)
+            .filter(Threat.target_role is not None)
             .group_by(Threat.target_role)
             .order_by(desc("count"))
             .all()

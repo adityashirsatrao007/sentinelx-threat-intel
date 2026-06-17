@@ -1,2 +1,18 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# ── Generated / vendored code ──────────────────────────────────────────────────
+# Flutter platform boilerplate (auto-generated, not hand-written Dart/Kotlin/Swift/C++)
+mobile_flutter/android/         linguist-vendored
+mobile_flutter/ios/             linguist-vendored
+mobile_flutter/macos/           linguist-vendored
+mobile_flutter/linux/           linguist-vendored
+mobile_flutter/windows/         linguist-vendored
+mobile_flutter/build/           linguist-vendored
+
+# Node modules and virtual environments
+frontend/node_modules/          linguist-vendored
+backend/.venv/                  linguist-vendored
+
+# Documentation
+**/*.md                         linguist-documentation

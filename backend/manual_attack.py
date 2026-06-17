@@ -25,7 +25,7 @@ def send_custom_attack(message):
         
         if attack_resp.status_code == 200:
             result = attack_resp.json()
-            print(f"✅ Threat Logged Successfully!")
+            print("✅ Threat Logged Successfully!")
             print(f"   Risk Score: {result['risk_score']}/100")
             print(f"   Classification: {result['classification_label'].upper()}")
             print("\n📱 Check your phone screen now!")

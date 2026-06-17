@@ -8,7 +8,6 @@ GET  /auth/me        — Return current user profile
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from app.core.limiter import limiter
 
 from app.core.security import hash_password, verify_password, create_access_token
 from app.core.config import settings

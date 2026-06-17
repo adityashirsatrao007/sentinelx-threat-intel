@@ -1,5 +1,4 @@
 import httpx
-import time
 
 BASE_URL = "http://localhost:8000/api/v1"
 email = "demo@sentinelx.com"
@@ -27,7 +26,7 @@ def create_user():
         })
         
         if resp.status_code in [201, 409]: # 409 is already exists
-            print(f"\n✅ Demo User Ready!")
+            print("\n✅ Demo User Ready!")
             print(f"Email (ID): {email}")
             print(f"Password:   {password}")
         else:
