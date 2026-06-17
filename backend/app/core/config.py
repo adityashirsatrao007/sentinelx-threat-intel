@@ -4,6 +4,7 @@ Loads all settings from environment variables or .env file.
 """
 
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from typing import List, Optional
 from functools import lru_cache
 
@@ -36,6 +37,13 @@ class Settings(BaseSettings):
 
     # ─── CORS ─────────────────────────────────────────────────────────────────
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+
+    @field_validator("ALLOWED_ORIGINS", mode="before")
+    @classmethod
+    def parse_allowed_origins(cls, v):
+        if isinstance(v, str):
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
 
     # ─── Risk Scoring Thresholds ──────────────────────────────────────────────
     RISK_THRESHOLD_LOW: float = 3.0
