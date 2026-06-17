@@ -60,16 +60,11 @@ class Settings(BaseSettings):
     PHISHTANK_API_KEY: Optional[str] = None
     HF_API_TOKEN: Optional[str] = None
 
-    # ─── Google OAuth / Gmail ─────────────────────────────────────────────────
-    GOOGLE_CLIENT_ID: Optional[str] = None
-    GOOGLE_CLIENT_SECRET: Optional[str] = None
-    GOOGLE_REDIRECT_URI: str = "https://sentinelx-48vt.onrender.com/api/v1/gmail/callback"
-    GOOGLE_SCOPES: List[str] = [
-        "https://www.googleapis.com/auth/gmail.readonly",
-        "openid",
-        "email",
-        "profile",
-    ]
+    # ─── Gmail (Optional) ─────────────────────────────────────────────────────
+    GMAIL_CLIENT_ID: Optional[str] = None
+    GMAIL_CLIENT_SECRET: Optional[str] = None
+    GMAIL_REDIRECT_URI: str = "http://localhost:8000/api/v1/gmail/callback"
+    FRONTEND_URL: str = "https://sentinelx-frontend-nu.vercel.app"
 
     # ─── Polling ──────────────────────────────────────────────────────────────
     GMAIL_POLL_INTERVAL_SECONDS: int = 60  # How often Celery polls Gmail
