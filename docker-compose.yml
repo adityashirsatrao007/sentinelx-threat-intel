@@ -1,0 +1,105 @@
+version: "3.9"
+
+services:
+
+
+  # ─── Redis (Celery broker + result backend) ─────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: sentinelx_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ─── FastAPI Backend ─────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sentinelx_backend
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ml_cache:/app/ml_cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  # ─── Celery Worker ───────────────────────────────────────────────────────────
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sentinelx_celery
+    command: >
+      celery -A app.workers.celery_worker.celery_app worker
+      --loglevel=info
+      --queues=email,sms,call,celery
+      --concurrency=4
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ml_cache:/app/ml_cache
+    restart: unless-stopped
+
+  # ─── Celery Flower (Task Monitor) — optional ─────────────────────────────────
+  flower:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sentinelx_flower
+    command: >
+      celery -A app.workers.celery_worker.celery_app flower
+      --port=5555
+    env_file:
+      - ./backend/.env
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - celery_worker
+    restart: unless-stopped
+    profiles:
+      - monitoring   # Start with: docker-compose --profile monitoring up
+
+volumes:
+
+  redis_data:
+  ml_cache:
+
+networks:
+  default:
+    name: sentinelx_network

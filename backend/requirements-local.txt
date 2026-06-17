@@ -1,0 +1,31 @@
+# ─── SentinelX — Local Requirements (Python 3.14 compatible) ─────────────────
+# Pydantic is installed separately: pip install "pydantic>=2.10" "pydantic-settings>=2.5" --only-binary :all:
+
+# ─── Web Framework ────────────────────────────────────────────────────────────
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+python-multipart>=0.0.9
+
+# ─── Database (SQLite locally) ────────────────────────────────────────────────
+sqlalchemy>=2.0.35
+alembic>=1.13.2
+
+# ─── Authentication & Security ────────────────────────────────────────────────
+passlib[bcrypt]>=1.7.4
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.2.0
+
+# ─── Background Tasks ─────────────────────────────────────────────────────────
+celery>=5.4.0
+redis>=5.1.1
+
+# ─── Rate Limiting ────────────────────────────────────────────────────────────
+slowapi>=0.1.9
+
+# ─── HTTP Client ──────────────────────────────────────────────────────────────
+httpx>=0.27.0
+
+# ─── Utilities ────────────────────────────────────────────────────────────────
+python-dotenv>=1.0.1
+structlog>=24.4.0
+email-validator>=2.2.0
