@@ -4,6 +4,9 @@
   "installCommand": "cd frontend && npm install",
   "framework": "vite",
   "env": {
-    "VITE_API_URL": "https://sentinelx-48vt.onrender.com/api/v1"
+    "VITE_API_URL": "http://localhost:8000/api/v1"
+  },
+  "github": {
+    "autoJobCancelation": true
   }
 }
