@@ -12,6 +12,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy import text
 
 from app.core.config import settings
 # from app.core.limiter import limiter
@@ -92,7 +93,7 @@ app = FastAPI(
 # ─── CORS ─────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins including mobile clients
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -145,12 +146,21 @@ app.include_router(simple_email.router, prefix="/api/v1")
 
 @app.get("/health", tags=["Health"], summary="Health check endpoint")
 def health_check() -> dict:
-    """Returns service health status."""
+    """Returns service health status with database connectivity check."""
+    db_ok = False
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+            db_ok = True
+    except Exception:
+        pass
+    status = "healthy" if db_ok else "degraded"
     return {
-        "status": "healthy",
+        "status": status,
         "service": settings.APP_NAME,
         "version": settings.APP_VERSION,
         "environment": settings.ENV,
+        "db": "connected" if db_ok else "disconnected",
     }
 
 
