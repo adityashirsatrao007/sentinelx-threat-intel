@@ -36,14 +36,7 @@ slowapi==0.1.9
 httpx==0.27.2
 
 # ─── AI / ML ──────────────────────────────────────────────────────────────────
-# NOTE: torch is required by openai-whisper for local model inference.
-# For CPU-only environments, use the CPU-specific torch wheel.
-# torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
-torch>=2.4.1
-
-# ─── Speech-to-Text ───────────────────────────────────────────────────────────
-# openai-whisper==20240930
-ffmpeg-python==0.2.0             # Required by Whisper for audio decoding
+# All ML inference uses Hugging Face Inference API — no local models.
 
 # ─── Utilities ────────────────────────────────────────────────────────────────
 python-dotenv==1.0.1

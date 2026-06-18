@@ -5,7 +5,6 @@ FROM python:3.11-slim AS base
 
 # System dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ffmpeg \
     libpq-dev \
     gcc \
     curl \
@@ -20,9 +19,6 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # ─── Application source ───────────────────────────────────────────────────
 COPY . .
-
-# Create ML model cache directory
-RUN mkdir -p /app/ml_cache
 
 # Create non-root user for security
 RUN useradd -m -u 1001 sentinelx && chown -R sentinelx:sentinelx /app

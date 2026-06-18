@@ -51,8 +51,6 @@ class Settings(BaseSettings):
 
     # ─── ML Models ────────────────────────────────────────────────────────────
     NLP_MODEL_NAME: str = "distilbert-base-uncased"
-    WHISPER_MODEL_SIZE: str = "base"  # tiny | base | small | medium | large
-    ML_CACHE_DIR: str = "/app/ml_cache"
     USE_GPU: bool = False
 
     # ─── External APIs (Optional) ─────────────────────────────────────────────
