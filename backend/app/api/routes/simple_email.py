@@ -16,14 +16,43 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from cryptography.fernet import Fernet
 
 from app.core.logging import get_logger
+from app.core.config import settings
 from app.database.session import get_db
 from app.database.models.models import EmailAccount, User
 from app.api.dependencies.auth import get_current_user
 from app.services.simple_gmail_service import simple_gmail_service
 from app.services.email_service import email_service
 from app.schemas.schemas import EmailAnalysisRequest
+
+
+def _get_fernet() -> Fernet | None:
+    key = settings.ENCRYPTION_KEY
+    if not key:
+        return None
+    try:
+        return Fernet(key.encode() if isinstance(key, str) else key)
+    except Exception:
+        logger = get_logger(__name__)
+        logger.warning("ENCRYPTION_KEY is invalid — app passwords will be stored in plaintext")
+        return None
+
+
+def _encrypt_token(plaintext: str, fernet: Fernet | None) -> str:
+    if fernet is None:
+        return plaintext
+    return fernet.encrypt(plaintext.encode()).decode()
+
+
+def _decrypt_token(ciphertext: str, fernet: Fernet | None) -> str:
+    if fernet is None:
+        return ciphertext
+    try:
+        return fernet.decrypt(ciphertext.encode()).decode()
+    except Exception:
+        return ciphertext
 
 logger = get_logger(__name__)
 
@@ -51,6 +80,8 @@ def connect_email(
     1. Go to myaccount.google.com → Security → 2-Step Verification → App Passwords
     2. Generate a password for "Mail"
     3. Enter email + that app password here
+
+    App passwords are encrypted at rest using ENCRYPTION_KEY.
     """
     # Test the connection first
     if not simple_gmail_service.connect(req.email_address, req.app_password):
@@ -58,6 +89,9 @@ def connect_email(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Could not connect. Check your email and app password. Make sure 2FA is enabled and you're using an App Password, not your regular password.",
         )
+
+    fernet = _get_fernet()
+    encrypted_password = _encrypt_token(req.app_password, fernet)
 
     # Check if already connected
     existing = (
@@ -70,7 +104,7 @@ def connect_email(
     )
 
     if existing:
-        existing.access_token = req.app_password  # Store app password
+        existing.access_token = encrypted_password
         existing.is_active = True
         db.commit()
         logger.info(f"Email re-connected: {req.email_address}")
@@ -80,7 +114,7 @@ def connect_email(
             user_id=current_user.id,
             provider="gmail_imap",
             email_address=req.email_address,
-            access_token=req.app_password,  # Store app password
+            access_token=encrypted_password,
             is_active=True,
         )
         db.add(account)
@@ -145,11 +179,13 @@ def scan_emails(
     threats_found = 0
     results = []
 
+    fernet = _get_fernet()
     for account in accounts:
         try:
+            decrypted_password = _decrypt_token(account.access_token or "", fernet)
             emails = simple_gmail_service.fetch_recent_emails(
                 email_address=account.email_address,
-                app_password=account.access_token,  # stored app password
+                app_password=decrypted_password,
                 max_results=10,
                 since_date=account.last_synced_at,
             )

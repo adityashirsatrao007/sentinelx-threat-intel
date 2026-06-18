@@ -3,9 +3,19 @@ SentinelX Core Configuration
 Loads all settings from environment variables or .env file.
 """
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 from typing import Optional
 from functools import lru_cache
+
+
+_KNOWN_WEAK_SECRETS = {
+    "change-me-in-production-use-256-bit-key",
+    "change-me-in-production-must-be-32-chars-minimum",
+    "super-secret-key-change-in-production",
+    "nyaya-secret-key-change-in-production",
+    "nyaya-test-secret-key",
+}
 
 
 class Settings(BaseSettings):
@@ -30,9 +40,12 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = "redis://redis:6379/1"
 
     # ─── JWT ──────────────────────────────────────────────────────────────────
-    SECRET_KEY: str = "change-me-in-production-use-256-bit-key"
+    SECRET_KEY: str  # No default — must be set via env var
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+
+    # ─── Encryption ───────────────────────────────────────────────────────────
+    ENCRYPTION_KEY: Optional[str] = None  # Fernet key for encrypting app passwords at rest
 
     # ─── CORS ─────────────────────────────────────────────────────────────────
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
@@ -79,6 +92,21 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = True
+
+    @field_validator("SECRET_KEY")
+    @classmethod
+    def reject_weak_secret(cls, v: str) -> str:
+        if v in _KNOWN_WEAK_SECRETS:
+            raise ValueError(
+                "SECRET_KEY is set to a known weak/default value. "
+                "Generate a strong key with: openssl rand -base64 48"
+            )
+        if len(v) < 32:
+            raise ValueError(
+                f"SECRET_KEY must be at least 32 characters (got {len(v)}). "
+                "Generate one with: openssl rand -base64 48"
+            )
+        return v
 
 
 @lru_cache()
